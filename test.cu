@@ -35,8 +35,11 @@ kernel executed as a grid of blocks of threads
 
 
 */
-__global__ void make_arr(int* arr){ // kernel, runs on the GPU and can be run by cpu
+__global__ void print_pos(void){ // kernel, runs on the GPU and can be run by cpu
     //usually void and do things on the argument
+    //std::cout << "THREAD DIMS:\n";
+    //std::cout << threadIdx.x << '\t' << threadIdx.y << '\t' << threadIdx.z << '\n';
+    printf("RUNNING ON GPU\n"); //ONLY PRINTF WORKS NOT STD COUT 
     return;
 }
 
@@ -71,7 +74,10 @@ int main(){
 
     int total_threads = t_per_block*b_per_grid;
 
+    int* arr = NULL;
 
 
+    print_pos<<<block_dim, thread_dim>>>();
+    cudaDeviceSynchronize();
     return 0;
 }
