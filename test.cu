@@ -24,6 +24,17 @@ h_A: cpu with variable name A
 d_A: gpu with variable name A
 
 */
+
+/*
+hirearchy:
+each kernel (gpu function) is a thread
+
+threads -> blocks -> grids 
+aka 
+kernel executed as a grid of blocks of threads
+
+
+*/
 __global__ void make_arr(int* arr){ // kernel, runs on the GPU and can be run by cpu
     //usually void and do things on the argument
     return;
@@ -43,9 +54,24 @@ __host__ void hello(void){ // function that runs on the CPU (dont need, implicit
 }
 
 int main(){
-    std::cout << "fdsddcscd";
-    int* arr = NULL;
-    std::cout<<arr;
+    int t_x = 4, 
+        t_y = 4, 
+        t_z = 4;
+
+    dim3 thread_dim(t_x, t_y, t_z);
+
+    int b_x = 2,
+        b_y = 3,
+        b_z = 4;
     
+    dim3 block_dim(b_x, b_y, b_z);
+    
+    int t_per_block = t_x*t_y*t_z; // threads per block
+    int b_per_grid = b_x*b_y*b_z; // blocks per grid
+
+    int total_threads = t_per_block*b_per_grid;
+
+
+
     return 0;
 }
