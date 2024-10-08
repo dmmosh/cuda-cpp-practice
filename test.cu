@@ -39,7 +39,10 @@ __global__ void print_pos(void){ // kernel, runs on the GPU and can be run by cp
     //usually void and do things on the argument
     //std::cout << "THREAD DIMS:\n";
     //std::cout << threadIdx.x << '\t' << threadIdx.y << '\t' << threadIdx.z << '\n';
-    printf("RUNNING ON GPU\n"); //ONLY PRINTF WORKS NOT STD COUT 
+    printf("THREAD: %i\t%i\t%i\t", threadIdx.x, threadIdx.y, threadIdx.z); //ONLY PRINTF WORKS NOT STD COUT 
+    printf("BLOCK: %i\t%i\t%i\n", blockIdx.x, blockIdx.y, blockIdx.z); 
+    
+    
     return;
 }
 
