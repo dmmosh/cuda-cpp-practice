@@ -1,19 +1,33 @@
 #include <cudnn.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 #include <math.h>
 #include <assert.h>
 
 // VECTOR ADDITION ON CUDA CORES
 /*
 __global__ keyword:
-
+CUDA kernel
 functions that are called from host but executed in the device, MUST BE VOID
 
 */
 __global__ void vectorAdd(int* a, int* b, int* c, int n){
+    // 1 thread PER ELEMENT that gets added
+
+    /*
+        
+    
+    */
+    int tid = (blockIdx.x* blockDim.x) + threadIdx.x;
+
 }
 
+void rand_0_99(int* arr, int n){
+    for(int i=0; i<n; i++){
+      arr[i] = (rand() % (99 - 1)) + 0;
+    }
+}
 
 typedef struct arr{
     int* a;
@@ -22,7 +36,8 @@ typedef struct arr{
 } arr;
 
 int main(){
-    int n = 1<<16; // 2^16 
+    srand(time(NULL));
+    int n = 1<<16; // 2^16 , number of elements
     
     size_t bytes = sizeof(int)*n; // amt of memory
 
@@ -44,15 +59,36 @@ int main(){
     DEVICE: gpu
     HOST: cpu
     */
+    rand_0_99(host.a, n);
+    rand_0_99(host.b, n);
 
 
-
+    // memcpy
     cudaMemcpy(device.a, host.a, bytes, cudaMemcpyHostToDevice); // a, b, annd where to memcpy   
     cudaMemcpy(device.b, host.b, bytes, cudaMemcpyHostToDevice); // a, b, annd where to memcpy   
     cudaMemcpy(device.c, host.c, bytes, cudaMemcpyHostToDevice); // a, b, annd where to memcpy   
 
+    int NUM_THREADS = 256; // amt of threads, multiple of 32
+    int NUM_WARPS = NUM_THREADS/32;  // 8
+    int NUM_BLOCKS  = n / NUM_THREADS;
+    vectorAdd<<<NUM_BLOCKS,NUM_THREADS>>>(device.a,device.b,device.c,n);
+
+    cudaMemcpy(device.c,host.c,bytes, cudaMemcpyDeviceToHost); // device: gpu, host: cpu
 
 
+    for(int i = 0; i<n; i++){
+        printf("%i ", host.c[i]);
+    }
+
+    cudaFree(device.a);
+    cudaFree(device.b);
+    cudaFree(device.c);
+
+
+    // VALGRIND TO CHECK MEM
+    free(host.a);
+    free(host.b);
+    free(host.c);
 
     return 0;
 }
