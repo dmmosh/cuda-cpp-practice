@@ -8,7 +8,7 @@
 /*
 __global__ keyword:
 
-functions that are called from cpu but executed in the gpu, MUST BE VOID
+functions that are called from host but executed in the device, MUST BE VOID
 
 */
 __global__ void vectorAdd(int* a, int* b, int* c, int n){
@@ -26,17 +26,33 @@ int main(){
     
     size_t bytes = sizeof(int)*n; // amt of memory
 
-    arr cpu{    // cpu 
+    arr host{    // host 
         (int*)malloc(bytes),
         (int*)malloc(bytes),
         (int*)malloc(bytes)
     };
 
-    arr gpu;
-    // gpu has its own memory 
-    cudaMalloc(&gpu.a,bytes); // mallocs space on the gpu
-    cudaMalloc(&gpu.b,bytes);        
-    cudaMalloc(&gpu.c,bytes);        
+    arr device;
+    // device has its own memory 
+    // allocated to vram
+    // remember to do cudaFree
+    cudaMalloc(&device.a,bytes); // mallocs space on the device
+    cudaMalloc(&device.b,bytes);        
+    cudaMalloc(&device.c,bytes);     
+
+    /*
+    DEVICE: gpu
+    HOST: cpu
+    */
+
+
+
+    cudaMemcpy(device.a, host.a, bytes, cudaMemcpyHostToDevice); // a, b, annd where to memcpy   
+    cudaMemcpy(device.b, host.b, bytes, cudaMemcpyHostToDevice); // a, b, annd where to memcpy   
+    cudaMemcpy(device.c, host.c, bytes, cudaMemcpyHostToDevice); // a, b, annd where to memcpy   
+
+
+
 
     return 0;
 }
