@@ -16,10 +16,25 @@ __global__ void vectorAdd(int* a, int* b, int* c, int n){
     // 1 thread PER ELEMENT that gets added
 
     /*
-        
+    BLOCKID:
+    block number 
+    start at 0
+
+    BLOCKDIM:
+    block size (constant, 256)
+
+    THREADID:
+    which thred in the thread block were in 
+    starts at 0
+
+    all are in x, y, z dimensions 
     
     */
     int tid = (blockIdx.x* blockDim.x) + threadIdx.x;
+
+    if (tid<n){
+        c[tid] = a[tid] + b[tid];
+    }
 
 }
 
@@ -64,6 +79,7 @@ int main(){
 
 
     // memcpy
+    // cudaMemcpyaTob (a to b )
     cudaMemcpy(device.a, host.a, bytes, cudaMemcpyHostToDevice); // a, b, annd where to memcpy   
     cudaMemcpy(device.b, host.b, bytes, cudaMemcpyHostToDevice); // a, b, annd where to memcpy   
     cudaMemcpy(device.c, host.c, bytes, cudaMemcpyHostToDevice); // a, b, annd where to memcpy   
@@ -73,7 +89,7 @@ int main(){
     int NUM_BLOCKS  = n / NUM_THREADS;
     vectorAdd<<<NUM_BLOCKS,NUM_THREADS>>>(device.a,device.b,device.c,n);
 
-    cudaMemcpy(device.c,host.c,bytes, cudaMemcpyDeviceToHost); // device: gpu, host: cpu
+    cudaMemcpy(host.c, device.c,bytes, cudaMemcpyDeviceToHost); // device: gpu, host: cpu
 
 
     for(int i = 0; i<n; i++){
