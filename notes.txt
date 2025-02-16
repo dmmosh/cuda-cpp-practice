@@ -1,0 +1,16 @@
+grid of blocks -> block of threads -> threads
+have to specify how many grids, blocks, and threads
+
+grid size: how many blocks in the grid
+block size: how many threads per block
+
+
+for memcpy have to specify whether going host to device or device to host
+
+device: graphics card
+host: cpu 
+
+
+every cuda function has to run with grid and block size as template args <<< GIRD_SIZE, BLOCK_SIZE >>>
+
+have to transfer memory to and from host nad device (or leave in device)  
